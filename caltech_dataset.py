@@ -6,7 +6,7 @@ import os
 import os.path
 import sys
 from typing import List, Tuple
-from random import choice
+from random import choice, seed
 
 
 def pil_loader(path):
@@ -35,6 +35,9 @@ class Caltech(VisionDataset):
         _split_train: List[Tuple[Image, int]] = []
         _split_test: List[Tuple[Image, int]] = []
 
+        # reliably split the set in the same way between different Caltech objects
+        seed(42)
+
         for i, d in enumerate([item for item in os.listdir(root)
                                if os.path.isdir(os.path.join(root, item))
                                and item != "BACKGROUND_Google"]):
@@ -61,7 +64,6 @@ class Caltech(VisionDataset):
 
         self.split_train = _split_train
         self.split_test = _split_test
-
 
     def __getitem__(self, index):
         '''
