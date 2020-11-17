@@ -6,7 +6,6 @@ import os
 import os.path
 import sys
 from typing import List, Tuple
-from random import choice, seed
 
 
 def pil_loader(path):
@@ -32,37 +31,17 @@ class Caltech(VisionDataset):
         - Labels should start from 0, so for Caltech you will have lables 0...100 (excluding the background class) 
         '''
 
-        _split_train: List[Tuple[Image, int]] = []
-        _split_test: List[Tuple[Image, int]] = []
-
-        # reliably split the set in the same way between different Caltech objects
-        seed(42)
-
-        for i, d in enumerate([item for item in os.listdir(root)
-                               if os.path.isdir(os.path.join(root, item))
-                               and item != "BACKGROUND_Google"]):
-            path = os.path.join(root, d)
-            images = [im for im in os.listdir(path) if im.endswith(".jpg")]
-            n_images = len(images)
-
-            if n_images % 2 == 0:
-                n_split_train = n_split_test = int(n_images / 2)
-            else:  # if odd, train is 1 more than test
-                n_split_train = int(n_images / 2) + 1
-                n_split_test = int(n_images / 2)
-
-            available = list(range(1, n_images + 1))
-            for _ in range(n_split_train):
-                selected = choice(available)
-                # add Tuple[Image, int] where int is the class
-                _split_train.append(((pil_loader(os.path.join(root, d, f"image_{str(selected).zfill(4)}.jpg"))), i))
-                available.remove(selected)
-            for _ in range(n_split_test):
-                selected = choice(available)
-                _split_test.append(((pil_loader(os.path.join(root, d, f"image_{str(selected).zfill(4)}.jpg"))), i))
-                available.remove(selected)
-
-        self.dataset = _split_train if split == "train" else _split_test
+        _dataset: List[Tuple[Image, int]] = []
+        if split in ("train", "test"):
+            with open(f"./{split}.txt", 'r') as f:
+                classes = []
+                for path in f.readlines():
+                    clazz = path.split("/")[0]
+                    if clazz != "BACKGROUND_Google":
+                        if clazz not in classes:
+                            classes.append(clazz)
+                        _dataset.append((pil_loader(os.path.join(root, path)), classes.index(clazz)))
+        self.dataset = _dataset
 
     def __getitem__(self, index):
         '''
