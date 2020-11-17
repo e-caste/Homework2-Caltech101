@@ -53,7 +53,11 @@ class Caltech(VisionDataset):
             tuple: (sample, target) where target is class_index of the target class.
         '''
 
-        image, label = ... # Provide a way to access image and label via index
+        if index < len(self.dataset):
+            image, label = self.dataset[index]
+        else:
+            image, label = None, None
+                           # Provide a way to access image and label via index
                            # Image should be a PIL Image
                            # label can be int
 
