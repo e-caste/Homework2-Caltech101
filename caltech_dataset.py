@@ -62,8 +62,7 @@ class Caltech(VisionDataset):
                 _split_test.append(((pil_loader(os.path.join(root, d, f"image_{str(selected).zfill(4)}.jpg"))), i))
                 available.remove(selected)
 
-        self.split_train = _split_train
-        self.split_test = _split_test
+        self.dataset = _split_train if split == "train" else _split_test
 
     def __getitem__(self, index):
         '''
