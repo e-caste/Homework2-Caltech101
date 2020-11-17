@@ -36,6 +36,7 @@ class Caltech(VisionDataset):
             with open(f"./{split}.txt", 'r') as f:
                 classes = []
                 for path in f.readlines():
+                    path = path.strip("\n")
                     clazz = path.split("/")[0]
                     if clazz != "BACKGROUND_Google":
                         if clazz not in classes:
