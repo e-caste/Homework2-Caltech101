@@ -75,3 +75,13 @@ class Caltech(VisionDataset):
         '''
         # Provide a way to get the length (number of elements) of the dataset
         return len(self.dataset) if self.dataset else 0
+
+
+if __name__ == "__main__":
+    DATA_DIR = './101_ObjectCategories'
+    train_dataset = Caltech(DATA_DIR, split='train', transform=None)
+    for i in range(0, len(train_dataset), 100):
+        print(train_dataset[i])
+    test_dataset = Caltech(DATA_DIR, split='test', transform=None)
+    for i in range(0, len(test_dataset), 100):
+        print(test_dataset[i])
